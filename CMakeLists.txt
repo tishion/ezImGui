@@ -75,11 +75,11 @@ endif()
 file(GLOB _common_HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imconfig.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_internal.h
 )
 
 # collect common source files
 file(GLOB _common_SOURCE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_internal.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_rectpack.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_textedit.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_truetype.h
