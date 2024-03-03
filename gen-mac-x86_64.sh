@@ -1,0 +1,1 @@
+cmake -G "Xcode" -S . -B .build/mac.x86_64 $*

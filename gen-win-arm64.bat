@@ -1,0 +1,1 @@
+cmake -S . -B .build\win.arm64 -A ARM64 %*
