@@ -76,13 +76,13 @@ file(GLOB _common_HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imconfig.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_internal.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_rectpack.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_textedit.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_truetype.h
 )
 
 # collect common source files
 file(GLOB _common_SOURCE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_rectpack.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_textedit.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_truetype.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tables.cpp
@@ -123,15 +123,17 @@ source_group(
   FILES ${_backend_SOURCE_FILES}
 )
 
-foreach(_header_file_path ${_common_HEADER_FILES} ${_backend_HEADER_FILES})
-  cmake_path(GET _header_file_path FILENAME _header_file_name)
-  message(STATUS "Copy public header: ${_header_file_name}")
-  configure_file(
-    ${_header_file_path}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui/${_header_file_name}
-    COPYONLY
-  )
-endforeach()
+if(EZIG_COPY_HEADERS)
+  foreach(_header_file_path ${_common_HEADER_FILES} ${_backend_HEADER_FILES})
+    cmake_path(GET _header_file_path FILENAME _header_file_name)
+    message(STATUS "Copy public header: ${_header_file_name}")
+    configure_file(
+      ${_header_file_path}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui/${_header_file_name}
+      COPYONLY
+    )
+  endforeach()
+endif()
 
 add_ezimgui_target(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
