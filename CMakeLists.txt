@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(ezImGui)
 
+option(EZIG_ENABLE_DOCKING "Enable docking mode" ON)
 option(EZIG_COPY_HEADERS "Copy headers to include folder" OFF)
 option(EZIG_SHARED_LIB "Build ezImGui as shared library" OFF)
 option(EZIG_BUILD_DEMO "Build ImGui example projects" ON)
@@ -65,6 +66,22 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 endif()
 
 # ###################################################
+# download imgui
+if(EZIG_ENABLE_DOCKING)
+  set(IMGUI_REPO_TAG "v1.90.4-docking")
+else()
+  set(IMGUI_REPO_TAG "v1.90.4")
+endif()
+
+include(FetchContent)
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  GIT_TAG ${IMGUI_REPO_TAG}
+)
+FetchContent_MakeAvailable(imgui)
+
+# ###################################################
 # ezimgui lib target
 if(EZIG_SHARED_LIB)
   set(EZIMGUI_LIBRARY_TYPE SHARED)
@@ -74,21 +91,21 @@ endif()
 
 # collect common header files
 file(GLOB _common_HEADER_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imconfig.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_internal.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_rectpack.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_textedit.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imstb_truetype.h
+  ${imgui_SOURCE_DIR}/imconfig.h
+  ${imgui_SOURCE_DIR}/imgui.h
+  ${imgui_SOURCE_DIR}/imgui_internal.h
+  ${imgui_SOURCE_DIR}/imstb_rectpack.h
+  ${imgui_SOURCE_DIR}/imstb_textedit.h
+  ${imgui_SOURCE_DIR}/imstb_truetype.h
 )
 
 # collect common source files
 file(GLOB _common_SOURCE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tables.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_widgets.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp
+  ${imgui_SOURCE_DIR}/imgui_demo.cpp
+  ${imgui_SOURCE_DIR}/imgui_draw.cpp
+  ${imgui_SOURCE_DIR}/imgui_tables.cpp
+  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+  ${imgui_SOURCE_DIR}/imgui.cpp
 )
 
 # collect backend source files for target platform
@@ -103,29 +120,29 @@ else()
 endif()
 
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR}/imgui
+  TREE ${imgui_SOURCE_DIR}
   PREFIX "include"
   FILES ${_common_HEADER_FILES}
 )
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
+  TREE ${imgui_SOURCE_DIR}/backends
   PREFIX "include"
   FILES ${_backend_HEADER_FILES}
 )
 
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR}/imgui
+  TREE ${imgui_SOURCE_DIR}
   PREFIX "source"
   FILES ${_common_SOURCE_FILES}
 )
 source_group(
-  TREE ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
+  TREE ${imgui_SOURCE_DIR}/backends
   PREFIX "source"
   FILES ${_backend_SOURCE_FILES}
 )
 
 set(EZIG_PUBLIC_INCLUDE_DIR
-  ${CMAKE_CURRENT_LIST_DIR}/imgui
+  ${imgui_SOURCE_DIR}
 )
 
 if(EZIG_COPY_HEADERS)
@@ -148,8 +165,8 @@ target_include_directories(${PROJECT_NAME}
   ${EZIG_PUBLIC_INCLUDE_DIR}
 
   PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/imgui
-  ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
+  ${imgui_SOURCE_DIR}
+  ${imgui_SOURCE_DIR}/backends
 )
 
 if(EZIG_BUILD_DEMO)
