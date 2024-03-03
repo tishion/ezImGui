@@ -4,8 +4,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(ezImGui)
 
-option(EZIG_BUILD_DEMO "Build ezImGui as shared library" ON)
+option(EZIG_COPY_HEADERS "Copy headers to include folder" OFF)
 option(EZIG_SHARED_LIB "Build ezImGui as shared library" OFF)
+option(EZIG_BUILD_DEMO "Build ImGui example projects" ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "~CMakeTargets")
@@ -123,6 +124,10 @@ source_group(
   FILES ${_backend_SOURCE_FILES}
 )
 
+set(EZIG_PUBLIC_INCLUDE_DIR
+  ${CMAKE_CURRENT_LIST_DIR}/imgui
+)
+
 if(EZIG_COPY_HEADERS)
   foreach(_header_file_path ${_common_HEADER_FILES} ${_backend_HEADER_FILES})
     cmake_path(GET _header_file_path FILENAME _header_file_name)
@@ -133,12 +138,14 @@ if(EZIG_COPY_HEADERS)
       COPYONLY
     )
   endforeach()
+
+  set(EZIG_PUBLIC_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 endif()
 
 add_ezimgui_target(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
   PUBLIC
-  ${CMAKE_CURRENT_LIST_DIR}/include
+  ${EZIG_PUBLIC_INCLUDE_DIR}
 
   PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/imgui
