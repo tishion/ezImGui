@@ -1,7 +1,7 @@
 #
 # The main config file for ezImGui
 #
-cmake_minimum_required(VERSION 3.19.1)
+cmake_minimum_required(VERSION 3.20)
 project(ezImGui)
 
 option(EZIG_BUILD_DEMO "Build ezImGui as shared library" ON)
@@ -122,9 +122,29 @@ source_group(
   FILES ${_backend_SOURCE_FILES}
 )
 
+message(STATUS "Copy public header: imgui.h")
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui/imgui.h
+  COPYONLY
+)
+
+foreach(_header_file_path ${_backend_HEADER_FILES})
+  cmake_path(GET _header_file_path FILENAME _header_file_name)
+  message(STATUS "Copy public header: ${_header_file_name}")
+  configure_file(
+    ${_header_file_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
+    COPYONLY
+  )
+endforeach()
+
 add_ezimgui_target(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
   PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}/include
+
+  PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/imgui
   ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
 )

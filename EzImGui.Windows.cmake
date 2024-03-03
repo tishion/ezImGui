@@ -33,11 +33,6 @@ if(EZIG_ENABLE_GLFW)
     INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/glfw/include
     IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/glfw/lib-vc2010-$(PlatformArchitecture)/glfw3.lib
   )
-
-  # target_include_directories(${_name}
-  # INTERFACE
-  # ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/glfw/include
-  # )
 endif()
 
 macro(add_ezimgui_target _name)
@@ -62,7 +57,11 @@ macro(add_exmaple_target _target)
   add_executable(${_target}
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/example_${_target}/main.cpp
   )
-
+  target_include_directories(${_target}
+    PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/imgui
+    ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
+  )
   target_link_libraries(${_target}
     PRIVATE
     ${PROJECT_NAME}
