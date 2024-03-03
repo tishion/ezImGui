@@ -73,6 +73,7 @@ endif()
 
 # collect common header files
 file(GLOB _common_HEADER_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imconfig.h
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
 )
 
@@ -122,19 +123,12 @@ source_group(
   FILES ${_backend_SOURCE_FILES}
 )
 
-message(STATUS "Copy public header: imgui.h")
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui/imgui.h
-  COPYONLY
-)
-
-foreach(_header_file_path ${_backend_HEADER_FILES})
+foreach(_header_file_path ${_common_HEADER_FILES} ${_backend_HEADER_FILES})
   cmake_path(GET _header_file_path FILENAME _header_file_name)
   message(STATUS "Copy public header: ${_header_file_name}")
   configure_file(
     ${_header_file_path}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui/${_header_file_name}
     COPYONLY
   )
 endforeach()
